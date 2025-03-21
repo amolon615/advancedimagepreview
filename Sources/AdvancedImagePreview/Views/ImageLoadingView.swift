@@ -15,35 +15,34 @@ struct ImageLoadingView: View {
     
     var onDismiss: (() -> Void)?
     
-    func loadImageFromURL(url: URL?, completion: @escaping (UIImage?) -> Void) {
+    
+    func loadImageFromURL(url: URL?) async -> UIImage? {
         guard let url else {
-            completion(nil)
-            return
+            return nil
         }
         
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data = data, error == nil else {
-                DispatchQueue.main.async {
-                    self.loadError = true
-                    self.isLoading = false
-                }
-                completion(nil)
-                return
-            }
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
             
             if let image = UIImage(data: data) {
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.isLoading = false
-                    completion(image)
                 }
+                return image
             } else {
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.loadError = true
                     self.isLoading = false
-                    completion(nil)
                 }
+                return nil
             }
-        }.resume()
+        } catch {
+            await MainActor.run {
+                self.loadError = true
+                self.isLoading = false
+            }
+            return nil
+        }
     }
     
     var body: some View {
@@ -90,15 +89,13 @@ struct ImageLoadingView: View {
             }
         }
         .onAppear {
-            // Generate a new ID to force view recreation
             viewID = UUID()
             isLoading = true
-            loadImageFromURL(url: imageURL) { loadedImage in
-                self.image = loadedImage
+            Task {
+                self.image = await loadImageFromURL(url: imageURL)
             }
         }
         .onDisappear {
-            // Reset the image to force a clean state next time
             self.image = nil
         }
     }
