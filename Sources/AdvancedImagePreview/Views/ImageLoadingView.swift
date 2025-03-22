@@ -7,12 +7,12 @@
 import SwiftUI
 
 struct ImageLoadingView: View {
-    let imageURL: URL
     @State private var image: UIImage?
     @State private var isLoading = true
     @State private var loadError = false
     @State private var viewID = UUID()
     
+    let imageURL: URL
     var onDismiss: (() -> Void)?
     
     
@@ -69,24 +69,19 @@ struct ImageLoadingView: View {
                     }
             }
             
-            // Close button in the top corner
-            VStack {
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        onDismiss?()
-                    }) {
-                        Image(systemName: "xmark")
-                            .font(.title2)
-                            .foregroundColor(.white)
-                            .padding(12)
-                            .background(Color.black.opacity(0.6))
-                            .clipShape(Circle())
-                    }
-                    .padding([.top, .trailing], 16)
-                }
-                Spacer()
+            Button {
+                onDismiss?()
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.title2)
+                    .foregroundColor(.white)
+                    .padding(12)
+                    .background(Color.black.opacity(0.6))
+                    .clipShape(Circle())
             }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .frame(maxHeight: .infinity)
         }
         .onAppear {
             viewID = UUID()
@@ -100,3 +95,4 @@ struct ImageLoadingView: View {
         }
     }
 }
+
