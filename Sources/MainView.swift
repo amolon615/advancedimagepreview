@@ -7,9 +7,10 @@
 
 import SwiftUI
 
+@main
 struct MainView: View {
     var body: some View {
-        ImageLoadingView(imageURL: URL(string: "https://apple.com")!) {
+        ImageLoadingView(imageURL: MockImageModel.landscapeImage) {
             print("")
         }
     }
