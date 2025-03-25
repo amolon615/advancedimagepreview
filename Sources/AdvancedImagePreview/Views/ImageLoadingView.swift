@@ -81,7 +81,7 @@ struct ImageLoadingView: View {
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .trailing)
-            .frame(maxHeight: .infinity)
+            .frame(maxHeight: .infinity, alignment: .top)
         }
         .onAppear {
             viewID = UUID()
