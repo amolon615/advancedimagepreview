@@ -22,8 +22,14 @@ struct MainView: App {
     }
 }
 
-#Preview {
+#Preview("Landscape preview") {
     ImageLoadingView(imageURL: MockImageModel.landscapeImage) {
+        print("")
+    }
+}
+
+#Preview("Portrait preview") {
+    ImageLoadingView(imageURL: MockImageModel.portraitImage) {
         print("")
     }
 }
